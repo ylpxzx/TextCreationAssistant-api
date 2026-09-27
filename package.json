@@ -1,0 +1,50 @@
+{
+  "name": "text-creation-api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/main.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:integration": "tsx src/testing/api.integration.ts",
+    "test:performance": "tsx src/testing/performance.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx src/database/migrate.ts",
+    "db:migrate:prod": "node dist/database/migrate.js",
+    "db:seed": "tsx src/database/seed.ts",
+    "key:generate": "tsx src/models/generate-key.ts"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/multipart": "^10.1.2",
+    "@fastify/static": "^10.1.4",
+    "@nestjs/common": "^11.1.6",
+    "@nestjs/core": "^11.1.6",
+    "@nestjs/platform-fastify": "^11.1.6",
+    "@nestjs/swagger": "^11.2.0",
+    "dotenv": "^17.2.2",
+    "drizzle-orm": "^0.45.3",
+    "fastify": "^5.6.1",
+    "jszip": "^3.10.2",
+    "mammoth": "^1.12.3",
+    "pdf-parse": "^2.4.5",
+    "postgres": "^3.4.7",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2",
+    "@types/pdf-parse": "^1.1.5",
+    "drizzle-kit": "^0.31.4",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.33.0"
+}

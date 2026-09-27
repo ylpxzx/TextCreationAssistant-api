@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1790249137487,
+      "tag": "0000_keen_kulan_gath",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790254046008,
+      "tag": "0001_faulty_dorian_gray",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790254883620,
+      "tag": "0002_yellow_the_twelve",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790254986373,
+      "tag": "0003_charming_gamora",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790255340486,
+      "tag": "0004_safe_havok",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790411638404,
+      "tag": "0005_secret_alice",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790485200000,
+      "tag": "0006_creative_intelligence",
+      "breakpoints": true
+    }
+  ]
+}
