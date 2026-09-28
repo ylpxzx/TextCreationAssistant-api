@@ -11,6 +11,7 @@ import { DATABASE } from '../database/database.constants'
 import type { Database } from '../database/database.module'
 import { bookAnalyses } from '../database/schema'
 import { and, desc, eq } from 'drizzle-orm'
+import type { CreateShortStoryInput } from './book-analysis.schemas'
 
 const supportedExtensions = new Set(['.pdf', '.epub', '.txt', '.md', '.markdown', '.docx'])
 
@@ -55,6 +56,24 @@ export class BookAnalysisService {
     if (!result?.originalPlan) throw new BadGatewayException({ code: 'BOOK_ORIGINAL_PLAN_MISSING', message: '模型没有返回可用的原创转化方案。' })
     const [updated] = await this.db.update(bookAnalyses).set({ originalPlan: result.originalPlan, title: result.originalPlan.title || record.title, model: profile.model, updatedAt: new Date() }).where(eq(bookAnalyses.id, record.id)).returning()
     return this.publicRecord(updated)
+  }
+
+  async createShortStory(analysisId: string, userId: string, input: CreateShortStoryInput, requestId: string) {
+    const record = await this.record(analysisId, userId)
+    const source = record.sourceAnalysis as { summary?: string; chapters?: Array<{ chapter?: string; summary?: string; turningPoint?: string; characterChanges?: string[] }> }
+    const chapters = source.chapters || []
+    const selectedChapters = [...new Set(input.chapterIndexes)].map(index => chapters[index]).filter(Boolean)
+    if (selectedChapters.length !== new Set(input.chapterIndexes).size) throw new BadRequestException({ code: 'BOOK_CHAPTER_NOT_FOUND', message: '所选章节不存在，请刷新拆书结果后重试。' })
+    const profile = await this.profiles.resolveDefaultApiKey(userId)
+    const controller = new AbortController()
+    const timer = setTimeout(() => controller.abort(), Math.min(env().AI_REQUEST_TIMEOUT_MS, 300_000))
+    try {
+      const response = await this.ai.createShortStory({ sourceTitle: record.title, sourceSummary: source.summary || '未提供全书概述', selectedChapters: selectedChapters.map(item => ({ chapter: item.chapter || '未命名章节', summary: item.summary || '无概述', turningPoint: item.turningPoint || '', characterChanges: item.characterChanges || [] })), targetWords: input.targetWords, model: { provider: profile.provider, model: profile.model, baseUrl: profile.baseUrl, apiKey: profile.apiKey } }, controller.signal, requestId)
+      const body = await response.json() as { result?: { title?: string; content?: string; wordCount?: number }; error?: { message?: string } }
+      if (!response.ok || !body.result?.content) throw new BadGatewayException({ code: 'SHORT_STORY_GENERATION_FAILED', message: body.error?.message || '短篇生成失败，请稍后重试。' })
+      if ((body.result.wordCount || body.result.content.replace(/\s/g, '').length) > 20_000) throw new BadGatewayException({ code: 'SHORT_STORY_TOO_LONG', message: '生成的短篇超过 2 万字，请调低目标字数后重试。' })
+      return body.result
+    } finally { clearTimeout(timer) }
   }
 
   async list(userId: string) {

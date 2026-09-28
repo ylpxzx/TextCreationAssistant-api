@@ -23,4 +23,9 @@ export class AiServiceClient {
     const config = this.config()
     return fetch(`${config.AI_SERVICE_URL}/internal/v1/books:analyze`, { method: 'POST', headers: { authorization: `Bearer ${config.AI_SERVICE_TOKEN}`, 'content-type': 'application/json', 'x-request-id': requestId }, body: JSON.stringify(body), signal })
   }
+
+  async createShortStory(body: Record<string, unknown>, signal: AbortSignal, requestId: string) {
+    const config = this.config()
+    return fetch(`${config.AI_SERVICE_URL}/internal/v1/books:short-story`, { method: 'POST', headers: { authorization: `Bearer ${config.AI_SERVICE_TOKEN}`, 'content-type': 'application/json', 'x-request-id': requestId }, body: JSON.stringify(body), signal })
+  }
 }
